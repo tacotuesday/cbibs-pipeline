@@ -1,0 +1,24 @@
+[
+  {"name": "ingestion_time", "type": "TIMESTAMP", "mode": "REQUIRED"},
+  {"name": "station", "type": "RECORD", "mode": "REPEATED", "fields": [
+    {"name": "stationShortName", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "stationLongName", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "active", "type": "BOOLEAN", "mode": "NULLABLE"},
+    {"name": "latitude", "type": "FLOAT", "mode": "NULLABLE"},
+    {"name": "longitude", "type": "FLOAT", "mode": "NULLABLE"},
+    {"name": "variables", "type": "RECORD", "mode": "REPEATED", "fields": [
+      {"name": "reportName", "type": "STRING", "mode": "NULLABLE"},
+      {"name": "actualName", "type": "STRING", "mode": "NULLABLE"},
+      {"name": "units", "type": "STRING", "mode": "NULLABLE"},
+      {"name": "elevation", "type": "FLOAT", "mode": "NULLABLE"},
+      {"name": "group", "type": "STRING", "mode": "NULLABLE"},
+      {"name": "interval", "type": "INTEGER", "mode": "NULLABLE"},
+      {"name": "measurements", "type": "RECORD", "mode": "REPEATED", "fields": [
+        {"name": "time", "type": "TIMESTAMP", "mode": "NULLABLE"},
+        {"name": "value", "type": "FLOAT", "mode": "NULLABLE"},
+        {"name": "QA", "type": "STRING", "mode": "NULLABLE"}
+      ]}
+    ]}
+  ]},
+  {"name": "raw_payload", "type": "JSON", "mode": "NULLABLE"}
+]
