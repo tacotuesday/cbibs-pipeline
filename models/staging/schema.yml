@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: raw
+    database: cbibs-pipeline
+    schema: raw_data
+    tables:
+      - name: api_raw_data
+
+models:
+  - name: stg_stations
+    columns:
+      - name: station_short_name
+        tests:
+          - unique
+          - not_null
+  - name: stg_measurements
+    columns:
+      - name: measurement_id
+        tests:
+          - unique
+          - not_null
