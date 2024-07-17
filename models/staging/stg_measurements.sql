@@ -1,7 +1,6 @@
 {{ config(materialized='view') }}
 
 SELECT
-  -- generate a unique ID, e.g., using MD5 hash
   MD5(CONCAT(station.station_short_name, CAST(measurement.time AS STRING), variable.actualName)) as measurement_id,
   ingestion_time,
   station.station_short_name,
