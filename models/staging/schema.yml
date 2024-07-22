@@ -6,34 +6,112 @@ sources:
     schema: raw_data
     tables:
       - name: api_raw_data
+        tests:
+          - dbt_utils.source_accepted_range:
+              field: ingestion_time
+              min_value: '2020-01-01'
+              max_value: "{{ dbt_utils.current_timestamp() }}"
 
 models:
   - name: stg_stations
+    description: "Cleaned and deduplicated station data from the CBIBS API"
     columns:
       - name: station_short_name
+        description: "Unique identifier for each station"
         tests:
           - unique
           - not_null
+          - dbt_utils.is_string
       - name: station_long_name
+        description: "Full name of each station"
+        tests:
+          - dbt_utils.is_string
       - name: is_active
+        description: "Flag to define whether the station is active and the data is current"
+        tests:
+          - dbt_utils.is_string
       - name: latitude
+        description: "Station latitude at last reading"
+        tests:
+          - not_null
+          - dbt_utils.is_numeric
+          - dbt_utils.between:
+              min_value: -90
+              max_value: 90
       - name: longitude
+        description: "Station longitude at last reading"
+        tests:
+          - not_null
+          - dbt_utils.is_numeric
+          - dbt_utils.between:
+              min_value: -90
+              max_value: 90
       - name: last_updated
+        description: "Timestamp of last station data update"
+        tests:
+          - not_null
+          - dbt_utils.is_timestamp
 
   - name: stg_measurements
     columns:
       - name: measurement_id
+        description: "Unique measurement ID"
         tests:
           - unique
           - not_null
       - name: ingestion_time
+        description: "Timestamp of last measurement update"
+        tests:
+          - not_null
+          - dbt_utils.is_timestamp
+          - dbt_utils.expression_is_true:
+              expression: "{{ column }} >= cast(measurement_time as timestamp)"
       - name: station_short_name
+        description: "Unique identifier for each station"
+        tests:
+          - not_null
+          - dbt_utils.is_string
       - name: parameter_report_name
+        description: "Formatted measurement name"
+        tests:
+          - not_null
+          - dbt_utils.is_string
       - name: parameter_actual_name
+        description: "Snake-case measurement name"
+        tests:
+          - not_null
+          - dbt_utils.is_string
       - name: parameter_group
+        description: "Measurement type"
+        tests:
+          - not_null
+          - dbt_utils.is_string
       - name: measurement_time
+        description: "Time of sensor measurement"
+        tests:
+          - dbt_utils.is_string
+          - dbt_utils.accepted_value:
+              values: [REGEX_MATCH('^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\+[0-9]{2}$')]
+          - dbt_utils.expression_is_true:
+              expression: "{{ column }} <= current_timestamp"
       - name: value
+        description: "Sensor measurement value"
+        tests:
+          - not_null
+          - dbt_utils.is_numeric
       - name: unit
+        description: "Unit of sensor measurement"
+        tests:
+          - dbt_utils.is_string
       - name: quality_flag
+        description: "Data quality flag"
+        tests:
+          - dbt_utils.is_string
       - name: elevation
+        description: "Station elevation"
+        tests:
+          - dbt_utils.is_numeric
       - name: measurement_interval
+        description: "Interval between measurements in seconds"
+        tests:
+          - dbt_utils.is_numeric
