@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw
-    database: "{{ env_var('DBT_PROJECT') }}"
+    database: "{{ target.project }}"
     schema: raw_data
     tables:
       - name: api_raw_data
@@ -11,12 +11,29 @@ models:
   - name: stg_stations
     columns:
       - name: station_short_name
-        data_tests:
+        tests:
           - unique
           - not_null
+      - name: station_long_name
+      - name: is_active
+      - name: latitude
+      - name: longitude
+      - name: last_updated
+
   - name: stg_measurements
     columns:
       - name: measurement_id
-        data_tests:
+        tests:
           - unique
           - not_null
+      - name: ingestion_time
+      - name: station_short_name
+      - name: parameter_report_name
+      - name: parameter_actual_name
+      - name: parameter_group
+      - name: measurement_time
+      - name: value
+      - name: unit
+      - name: quality_flag
+      - name: elevation
+      - name: measurement_interval
